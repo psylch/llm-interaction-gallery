@@ -1,4 +1,4 @@
-export const mockGenerateContentStream = async function* (prompt: string) {
+export const mockGenerateContentStream = async function* (_prompt: string) {
   const responses = [
     "That's an interesting perspective. Let's explore the implications of that idea in a futuristic context.",
     "Based on the parameters you've provided, the optimal solution involves a hybrid approach of quantum computing and neural networks.",

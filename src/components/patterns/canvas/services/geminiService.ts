@@ -7,7 +7,7 @@ export const generateContentStream = async (
   systemInstruction?: string
 ) => {
   try {
-    const apiKey = import.meta.env?.VITE_GOOGLE_API_KEY;
+    const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
     if (!apiKey) {
       throw new Error('API Key not found');
     }

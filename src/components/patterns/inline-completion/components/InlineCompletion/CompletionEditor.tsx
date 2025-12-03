@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { getCompletion } from '../../services/completionService';
-import { Loader2, Keyboard, Sparkles } from 'lucide-react';
+import { Loader2, Sparkles } from 'lucide-react';
 
 export const CompletionEditor: React.FC = () => {
   const [text, setText] = useState('');

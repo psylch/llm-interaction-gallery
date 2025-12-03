@@ -1,6 +1,6 @@
-import React, { memo } from 'react';
+import { memo } from 'react';
 import { Handle, Position, NodeProps } from 'reactflow';
-import { Bot, User, GitBranch, Loader2 } from 'lucide-react';
+import { Bot, User, GitBranch } from 'lucide-react';
 import { NodeData, Role } from '../types';
 
 const CustomNode = ({ data, id, selected }: NodeProps<NodeData>) => {

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import ReactFlow, {
   Background,
   Controls,
@@ -129,7 +129,7 @@ const AppContent = () => {
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeParentId, setActiveParentId] = useState<string | null>(null);
-  const [apiKeyExists] = useState(Boolean(import.meta.env?.VITE_GOOGLE_API_KEY));
+  const [apiKeyExists] = useState(Boolean(import.meta.env.VITE_GOOGLE_API_KEY));
   const { fitView, getNodes, getEdges } = useReactFlow();
 
   // Update onBranch callback
@@ -282,7 +282,7 @@ const AppContent = () => {
       if (apiKeyExists) {
          for await (const chunk of (stream as any)) {
             const c = chunk as GenerateContentResponse;
-            const text = typeof c?.text === 'function' ? c.text() : (c as any)?.text || '';
+            const text = (c as any)?.text?.() ?? (c as any)?.text ?? '';
             fullText += text;
             
             setNodes((nds) => 
