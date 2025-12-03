@@ -2,8 +2,8 @@
 
 > 本文档追踪项目的开发进度、任务状态和版本规划
 
-**最后更新**: 2025-11-13
-**当前阶段**: Phase 1 - 基础框架 (进行中)
+**最后更新**: 2025-12-03
+**当前阶段**: Phase 1 - 基础框架 (已完成)
 
 ---
 
@@ -11,13 +11,13 @@
 
 ### 正在进行 (In Progress)
 
-- 无
+- Infinite Canvas 模式：本地 Mock + 外部 API 演示接入
 
 ### 待办事项 (Todo - High Priority)
 
-- [ ] 完善其他 Phase 1 模式的占位页面
+- [ ] 实现其他 Phase 2 交互模式（Inline Completion, Artifacts）
 - [ ] 添加更多 Mock 响应数据
-- [ ] 优化响应式设计
+- [ ] 优化响应式设计（移动端适配）
 
 ---
 
@@ -92,16 +92,19 @@
   - [ ] 支持图表类型 artifact
   - [ ] 实时预览功能
 
-- [ ] **模式详情页**
-  - [ ] 详情页模板
-  - [ ] iframe 演示集成
-  - [ ] 代码展示组件
-  - [ ] 设计说明文档
+- [x] **模式详情页**
+  - [x] Tab 式详情页布局（Live Demo、Overview、Implementation）
+  - [x] 支持内部组件和外部 iframe 展示
+  - [x] 代码展示和复制功能
+  - [x] LLM Prompt (llms.txt) 展示和复制
+  - [x] Glassmorphism 设计（高斯模糊背景）
+  - [x] 完整的模式说明文档（Use Cases、Features、Pros/Cons）
 
 **完成标准**:
 - ✅ 3 个交互模式可以独立运行
 - ✅ 每个模式有完整的详情页
 - ✅ Demo 可以在 iframe 中展示
+- ✅ 支持外部网页嵌套
 
 ---
 
@@ -112,7 +115,7 @@
 ### 任务清单
 
 - [ ] **Infinite Canvas 模式**
-  - [ ] 画布基础实现
+  - [x] 画布基础实现
   - [ ] 节点组件
   - [ ] 拖拽和缩放
   - [ ] 节点连接
@@ -181,6 +184,31 @@
 
 ## 🎉 已完成功能
 
+### v0.3.0 (2025-12-03) - 详情页重大升级
+
+**核心改进**：
+- ✅ 全新的 Tab 式详情页设计
+  - 🎮 Live Demo Tab（默认显示）
+  - 📝 Overview Tab（详细说明）
+  - 💻 Implementation Tab（代码和 Prompt）
+- ✅ Glassmorphism 视觉设计
+  - 高斯模糊背景（`backdrop-blur-xl`）
+  - 半透明层次效果
+  - 大幅提升文字可读性
+- ✅ 代码和 Prompt 一键复制功能
+- ✅ 支持外部网页 iframe 嵌套
+- ✅ 完整的模式文档系统
+  - Use Cases、Key Features
+  - Advantages、Limitations
+  - Best Practices
+- ✅ 为 Chatbot 添加完整的代码示例和 llms.txt
+- ✅ 为 Inline Completion 和 Artifacts 添加外部演示链接
+
+**技术实现**：
+- 扩展 `PatternConfig` 类型支持详细信息
+- 创建 `CopyButton` 通用组件
+- 优化 Tab 切换动画和交互
+
 ### v0.2.0 (2025-11-13) - 首个可运行版本
 
 - ✅ 完整项目架构搭建
@@ -224,17 +252,17 @@
 
 | Phase | 进度 | 状态 |
 |-------|------|------|
-| Phase 1 | 90% | 进行中 ✨ |
-| Phase 2 | 0% | 未开始 |
+| Phase 1 | 100% | ✅ 已完成 |
+| Phase 2 | 30% | 进行中 ✨ |
 | Phase 3 | 0% | 未开始 |
 | Phase 4 | 0% | 未开始 |
 
-**总体进度**: 22.5% (Phase 1 基本完成)
+**总体进度**: 32.5% (Phase 1 完成，Phase 2 部分完成)
 
 **交互模式进度**:
-- ✅ Chatbot (100%) - 完整功能
-- 🚧 Inline Completion (0%) - WIP
-- 🚧 LLM Artifacts (0%) - WIP
+- ✅ Chatbot (100%) - 完整功能 + 完整文档
+- 🚧 Inline Completion (20%) - 有外部示例链接和文档
+- 🚧 LLM Artifacts (20%) - 有外部示例链接和文档
 - 🚧 Infinite Canvas (0%) - WIP
 - 🚧 Command Palette (0%) - WIP
 - 🚧 Inline Editing (0%) - WIP

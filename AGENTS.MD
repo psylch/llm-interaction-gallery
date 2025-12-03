@@ -1,8 +1,6 @@
 # CLAUDE.MD - AI Agent 协作指南
 
 > 本文档定义了 AI Agent（如 Claude、GPT-4、Gemini 等）与项目维护者的协作方式、工作流程和交互原则
->
-> ⚠️ **注意**: 虽然文件名为 CLAUDE.md（历史原因），但本指南适用于所有 AI 代理模型
 
 ## 文档目的
 
