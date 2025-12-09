@@ -241,6 +241,120 @@ OPTIONAL ENHANCEMENTS:
         'Complex to implement with proper debouncing',
       ],
     },
+    codeExample: {
+      language: 'typescript',
+      description: 'Debounced inline completion with ghost text and Tab accept',
+      code: `import { useEffect, useRef, useState } from 'react';
+
+interface CompletionRequest {
+  prefix: string;
+  context?: string;
+}
+
+async function mockCompletion(req: CompletionRequest): Promise<string> {
+  const options = [
+    'for building adaptive UI components.',
+    'with instant ghost text feedback.',
+    'using the Future Lab design system.',
+  ];
+  await new Promise(r => setTimeout(r, 220));
+  return options[Math.floor(Math.random() * options.length)];
+}
+
+export function InlineCompletionInput() {
+  const [value, setValue] = useState('');
+  const [suggestion, setSuggestion] = useState('');
+  const [loading, setLoading] = useState(false);
+  const debounceRef = useRef<number>();
+
+  useEffect(() => {
+    window.clearTimeout(debounceRef.current);
+    if (!value.trim()) {
+      setSuggestion('');
+      return;
+    }
+    debounceRef.current = window.setTimeout(async () => {
+      setLoading(true);
+      const result = await mockCompletion({ prefix: value });
+      setSuggestion(result);
+      setLoading(false);
+    }, 280);
+    return () => window.clearTimeout(debounceRef.current);
+  }, [value]);
+
+  const accept = () => {
+    if (!suggestion) return;
+    setValue(v => v + suggestion);
+    setSuggestion('');
+  };
+
+  return (
+    <div className="relative w-full max-w-2xl">
+      <div className="absolute inset-0 rounded-xl bg-primary/5 blur-xl pointer-events-none" />
+      <div className="relative glass rounded-xl border border-white/10 p-4">
+        <div className="relative font-mono text-sm text-gray-200">
+          <span className="whitespace-pre-wrap">{value}</span>
+          {suggestion && (
+            <span className="whitespace-pre-wrap text-gray-500/80">{suggestion}</span>
+          )}
+          <textarea
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Tab') {
+                e.preventDefault();
+                accept();
+              } else if (e.key === 'Escape') {
+                setSuggestion('');
+              }
+            }}
+            rows={3}
+            className="absolute inset-0 w-full h-full bg-transparent text-transparent caret-primary resize-none outline-none"
+            aria-label="Inline completion input"
+          />
+        </div>
+        <div className="flex items-center justify-between mt-3 text-xs text-gray-500">
+          <span>{loading ? 'Thinking…' : 'Tab to accept · Esc to clear'}</span>
+          {suggestion && <span className="text-primary font-semibold">Suggestion ready</span>}
+        </div>
+      </div>
+    </div>
+  );
+}`,
+    },
+
+    llmsPrompt: `# Inline Completion Implementation Guide
+
+CORE FEATURES:
+- Ghost text suggestion overlay that mirrors input font/spacing
+- Debounced API/mock calls (250-400ms) keyed by prefix + context
+- Keyboard controls: Tab/ArrowRight to accept, Esc to clear, Enter to submit
+- Loading indicator for pending suggestions; clear suggestion on edits
+
+DATA MODEL:
+- CompletionState: { value: string; suggestion: string; isLoading: boolean }
+- Request: { prefix: string; suffix?: string; context?: string }
+
+INTERACTION:
+- On change → debounce → fetch suggestion → render ghost text
+- Tab/→ merges suggestion into value; clears suggestion state
+- Esc clears suggestion but keeps current text
+- When value empty, hide ghost text and skip calls
+
+UI:
+- Future Lab styling: glass panel, neon accent caret, mono ghost text in gray
+- Ensure textarea sits above ghost text with transparent text color
+- Provide hint text like “Tab to accept · Esc to clear”
+
+ERROR HANDLING:
+- On fetch failure, surface subtle toast/badge and clear suggestion
+- Abort stale requests when value changes rapidly
+- Clamp max suggestion length to avoid overflow
+
+BEST PRACTICES:
+- Keep debounce consistent (280-320ms) to feel responsive
+- Mirror font metrics to prevent ghost text jitter
+- Respect accessibility: aria-label on input, visible focus ring`,
   },
   {
     id: 'artifacts',

@@ -79,9 +79,8 @@ export default function HomePage() {
         {/* Footer */}
         <footer className="mt-24 pt-12 border-t border-border/50 text-center text-sm text-muted-foreground">
           <p>
-            Built with ⚡ by{' '}
-            <span className="text-primary font-medium">Claude Code</span>
-            {' '}& frontend-design skill
+            Built by{' '}
+            <span className="text-primary font-medium">Chihao (Charles) Li</span>
           </p>
           <p className="mt-2">
             Open source • MIT License
