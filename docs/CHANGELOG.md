@@ -27,6 +27,11 @@
   - 创建 `InfiniteCanvasDemo` 包装组件，适配详情页 Live Demo
   - Mock 流模式 + Gemini 钩子（`VITE_GOOGLE_API_KEY`）双通道
   - Pattern 配置更新为 `demoType: 'both'`，附外部 API 演示链接
+- **Artifacts / Command Palette / Inline Editing 集成**
+  - 新增三个 Demo 包装组件，适配 Live Demo Tab
+  - Patterns 状态升级为 `available`，并补充 Overview、Code Example、LLM Prompt
+  - 支持本地 Mock 与 AI Studio 外部演示链接并存（`demoType: 'both'`）
+  - 移除子项目冗余配置（package.json、vite/tsconfig/index.html 等）
 
 ### Changed
 - **CLAUDE.md 模型兼容性改进**

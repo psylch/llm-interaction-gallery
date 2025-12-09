@@ -1,0 +1,5 @@
+{
+  "name": "LLM Artifacts Demo",
+  "description": "A split-view interface demonstrating LLM-generated interactive artifacts with streaming support, featuring a Future Lab aesthetic.",
+  "requestFramePermissions": []
+}

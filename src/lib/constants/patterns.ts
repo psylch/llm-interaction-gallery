@@ -248,12 +248,12 @@ OPTIONAL ENHANCEMENTS:
     description: 'Generate and preview interactive content',
     category: 'generation',
     complexity: 'complex',
-    status: 'wip',
+    status: 'available',
     tags: ['generation', 'preview', 'interactive'],
     demoPath: '/demo/artifacts',
-    demoType: 'external',
-    externalDemoUrl: 'https://claude.ai',
-    externalDemoNote: 'Claude.ai may block iframe embedding. Visit the site to see Artifacts in action.',
+    demoType: 'both',
+    externalDemoUrl: 'https://ai.studio/apps/drive/17bO8Aop0QgT82bZd4Gl7uGcnNCNXY42w?fullscreenApplet=true',
+    externalDemoNote: 'Mocked locally with parser + sandbox. Open the API-powered version in a new tab to compare artifact streaming.',
 
     overview: {
       useCases: [
@@ -267,18 +267,103 @@ OPTIONAL ENHANCEMENTS:
         'Real-time preview of generated content',
         'Support for multiple content types (code, charts, SVG, React)',
         'Editable artifacts with iteration support',
+        'Gemini stream fallback to mock generator when no API key is present',
+        'Artifact extraction via <llmartifact> tags to keep responses clean',
       ],
       pros: [
         'What-you-see-is-what-you-get experience',
         'Great for creative and iterative workflows',
         'Supports complex content types',
+        'Seamlessly toggles between mock and API without code changes',
       ],
       cons: [
         'Complex to implement securely (requires sandboxing)',
         'Higher performance overhead',
         'Challenging error handling for generated code',
       ],
+      bestPractices: [
+        'Keep the preview sandbox isolated with sandbox="allow-scripts" to avoid leaking styles',
+        'Force code view during streaming, then auto-switch to preview when complete',
+        'Treat artifacts as first-class objects keyed by message id to avoid duplicates',
+      ],
     },
+
+    codeExample: {
+      language: 'typescript',
+      description: 'Streaming artifact extraction with mock + Gemini dual-mode support',
+      code: `import { useState } from 'react';
+import { mockChatStream } from './services/mockService';
+import { geminiChatStream } from './services/geminiService';
+import { extractArtifacts } from './utils/parser';
+
+export function ArtifactsMini() {
+  const [messages, setMessages] = useState([]);
+  const [artifacts, setArtifacts] = useState({});
+  const [activeId, setActiveId] = useState(null);
+  const [mode, setMode] = useState<'mock' | 'gemini'>('mock');
+
+  const send = async (prompt: string) => {
+    const user = { id: 'user-' + Date.now(), role: 'user', content: prompt };
+    const assistantId = 'assistant-' + Date.now();
+    setMessages(prev => [...prev, user, { id: assistantId, role: 'assistant', content: '' }]);
+
+    const stream = mode === 'gemini' ? geminiChatStream([user]) : mockChatStream([user]);
+    let buffer = '';
+
+    for await (const chunk of stream) {
+      buffer += chunk;
+      setMessages(prev => prev.map(m => m.id === assistantId ? { ...m, content: buffer } : m));
+
+      const found = extractArtifacts(buffer, assistantId);
+      if (found.length) {
+        setArtifacts(prev => ({ ...prev, ...Object.fromEntries(found.map(a => [a.id, a])) }));
+        setActiveId(found[0].id);
+      }
+    }
+  };
+
+  return null; // Render ChatPanel + ArtifactRenderer in your UI
+}
+`,
+    },
+
+    llmsPrompt: `# LLM Artifacts Implementation Guide
+
+CORE FEATURES:
+- Split chat + preview layout with Future Lab theming (glassmorphism + neon glows)
+- Parse assistant output for <llmartifact title="" type="html|svg"> ... </llmartifact>
+- Stream responses chunk by chunk; keep code tab active while streaming
+- Support both mock generator and Gemini (VITE_GOOGLE_API_KEY) with a simple mode toggle
+
+DATA MODEL:
+- Message: { id, role: 'user' | 'assistant', content, hasArtifact? }
+- Artifact: { id, messageId, title, type: 'html' | 'svg' | 'react', content, status }
+- Mode: 'mock' | 'gemini'
+
+INTERACTION:
+- User sends prompt → assistant streams text and artifacts
+- When an artifact tag is detected, store it by id and show a selectable badge in the chat
+- Code tab is locked during streaming; switch to Preview when status = 'complete'
+
+STREAMING IMPLEMENTATION:
+- Prefer async generators for streaming (50–120ms cadence)
+- If no VITE_GOOGLE_API_KEY, yield a friendly error and keep mock mode available
+- Debounce artifact extraction to avoid flicker; update the active artifact once per message
+
+UI/UX:
+- Dark background (#0a0a0f) with cyan/magenta glow shells
+- Glass containers, gradient borders, and shimmer cues on hover
+- Keyboard friendly: Enter to send, Esc to cancel input focus
+
+ERROR HANDLING:
+- Gemini errors → render inline error text in the assistant bubble
+- Invalid artifact tags → ignore silently, keep raw text visible
+- Sandbox iframe with allow-scripts only; never allow-same-origin
+
+BEST PRACTICES:
+- Limit preview surface to 16:9, add scroll for tall content
+- Show byte length + artifact id in a footer to aid debugging
+- Keep fonts consistent: Syne (display), Epilogue (body), JetBrains Mono (code)`,
   },
   {
     id: 'infinite-canvas',
@@ -456,9 +541,118 @@ BEST PRACTICES:
     description: 'Keyboard-driven command interface',
     category: 'command',
     complexity: 'medium',
-    status: 'wip',
+    status: 'available',
     tags: ['command', 'keyboard', 'search'],
     demoPath: '/demo/command-palette',
+    demoType: 'both',
+    externalDemoUrl: 'https://ai.studio/apps/drive/1ywiuDWMRXLql2fji3k7D3Nk04CAiZ3dV?fullscreenApplet=true',
+    externalDemoNote: 'Local mock palette + API demo side-by-side. Open the AI Studio link to see the hosted build.',
+
+    overview: {
+      useCases: [
+        'Productivity tools that centralize navigation and actions under Cmd/Ctrl + K',
+        'Developer consoles that trigger scripts, toggles, and shortcuts from one surface',
+        'Knowledge apps with fuzzy search over documents and semantic commands',
+        'Customer support tools where agents trigger workflows without leaving keyboard',
+      ],
+      keyFeatures: [
+        'Global shortcut listener (Cmd/Ctrl + K) with Esc to close',
+        'Fuzzy search + grouped commands with recent history surfacing',
+        'AI assist path (Tab) to rewrite or suggest commands on the fly',
+        'Keyboard-first navigation with arrow keys + Enter to execute',
+        'Glassmorphism modal, gradient focus ring, and toast confirmations',
+      ],
+      pros: [
+        'Keeps users in flow with minimal mouse use',
+        'Scales to hundreds of commands via fuzzy matching',
+        'Easy to extend with new actions and AI suggestions',
+      ],
+      cons: [
+        'Requires strong keyboard affordances for discoverability',
+        'Mobile UX is limited; should degrade to a sheet or list',
+        'Needs careful accessibility focus trapping and aria labels',
+      ],
+      bestPractices: [
+        'Debounce search input (~120ms) and highlight matches inline',
+        'Show hint badges for shortcuts (⌘K, Tab) near the trigger',
+        'Animate open/close with opacity + scale, not layout-affecting props',
+      ],
+    },
+
+    codeExample: {
+      language: 'typescript',
+      description: 'Minimal command palette with keyboard toggle and fuzzy filtering',
+      code: `import { useEffect, useMemo, useState } from 'react';
+import Fuse from 'fuse.js';
+
+const commands = [
+  { id: 'new-doc', label: 'Create Document', keywords: ['new', 'doc', 'file'] },
+  { id: 'open-settings', label: 'Open Settings', keywords: ['settings', 'preferences'] },
+];
+
+export function useCommandPalette() {
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState('');
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setOpen(v => !v);
+      }
+      if (e.key === 'Escape') setOpen(false);
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, []);
+
+  const results = useMemo(() => {
+    if (!query) return commands;
+    const fuse = new Fuse(commands, { keys: ['label', 'keywords'], threshold: 0.35 });
+    return fuse.search(query).map(r => r.item);
+  }, [query]);
+
+  return { open, setOpen, query, setQuery, results };
+}
+`,
+    },
+
+    llmsPrompt: `# Command Palette Implementation Guide
+
+CORE FEATURES:
+- Global shortcut (Cmd/Ctrl + K) opens a glassmorphism modal
+- Fuzzy search across grouped commands; highlight matches inline
+- Keyboard navigation: ArrowUp/ArrowDown to move, Enter to execute, Esc to close
+- Optional AI assist: Tab or a secondary input that rewrites the intent
+
+DATA MODEL:
+- Command: { id, label, description?, keywords: string[], action: () => void, shortcut?: string }
+- State: { open: boolean, query: string, selectedIndex: number, recent: string[] }
+
+INTERACTION:
+- Press Cmd/Ctrl + K → focus search input
+- Typing filters commands; show recent first when query is empty
+- Enter executes the active command and closes palette; toast success
+- Esc closes; click outside closes; keep focus trapped while open
+
+UI:
+- Dark glass panel with neon ring; backdrop blur and grid texture
+- Pills for shortcuts (⌘K, Tab) near the trigger and items
+- 300ms transitions; use transform + opacity for performance
+
+ACCESSIBILITY:
+- aria-modal on the dialog container
+- aria-activedescendant for the active list item
+- Focus trap while open; restore focus to trigger on close
+
+ERROR HANDLING:
+- Gracefully handle missing commands; show \"No results\" state
+- If AI suggestions fail, fall back to static list without blocking input
+
+BEST PRACTICES:
+- Cap list height with custom scrollbar; avoid layout shift on open
+- Keep semantic grouping (Suggestions, Recent, All) for scanability
+- Make actions idempotent when possible to avoid duplicate side effects`,
   },
   {
     id: 'inline-editing',
@@ -466,9 +660,119 @@ BEST PRACTICES:
     description: 'Edit selected text with AI assistance',
     category: 'editing',
     complexity: 'medium',
-    status: 'wip',
+    status: 'available',
     tags: ['editing', 'selection', 'diff'],
     demoPath: '/demo/inline-editing',
+    demoType: 'both',
+    externalDemoUrl: 'https://ai.studio/apps/drive/1aNtoA4Hlc-mTzqPmUFsvayM3vcsZ1G_t?fullscreenApplet=true',
+    externalDemoNote: 'Local mock diff + hosted AI Studio build. Use the external link for the deployed version.',
+
+    overview: {
+      useCases: [
+        'Writer tools that rewrite, shorten, or expand highlighted text',
+        'Developer docs that suggest inline fixes with diff previews',
+        'Localization workflows that translate selected sentences in place',
+        'Support teams refining canned responses with quick edits',
+      ],
+      keyFeatures: [
+        'Selection-aware floating toolbar with actions (rewrite, improve, translate, fix)',
+        'Inline diff rendering with add/remove highlights',
+        'Mock processor for deterministic edits plus AI hook placeholder',
+        'Glassmorphism shell with gradient halo around editable surface',
+      ],
+      pros: [
+        'Keeps users in context without switching panes',
+        'Diff view builds trust by showing exactly what changed',
+        'Keyboard friendly acceptance (Cmd/Ctrl + Enter) and escape',
+      ],
+      cons: [
+        'Long selections can create noisy diffs without truncation',
+        'Mobile text selection UX is less precise',
+        'Requires careful focus/selection management to avoid flicker',
+      ],
+      bestPractices: [
+        'Auto-dismiss toolbar when selection is collapsed or blur occurs',
+        'Throttle selection change handlers to avoid excessive renders',
+        'Use semantic colors: green for additions, red for removals, gray for unchanged',
+      ],
+    },
+
+    codeExample: {
+      language: 'typescript',
+      description: 'Selection hook + diff renderer for inline editing',
+      code: `import { useEffect, useState } from 'react';
+import { diffWords } from 'diff';
+
+export function useSelection() {
+  const [selection, setSelection] = useState<{ text: string; range: Range | null }>({ text: '', range: null });
+
+  useEffect(() => {
+    const handler = () => {
+      const sel = window.getSelection();
+      if (!sel || sel.isCollapsed) return setSelection({ text: '', range: null });
+      setSelection({ text: sel.toString(), range: sel.getRangeAt(0).cloneRange() });
+    };
+    document.addEventListener('selectionchange', handler);
+    return () => document.removeEventListener('selectionchange', handler);
+  }, []);
+
+  return selection;
+}
+
+export function DiffView({ original, updated }: { original: string; updated: string }) {
+  const chunks = diffWords(original, updated);
+  return (
+    <div className="rounded-lg border border-white/10 bg-black/30 p-3 font-mono text-sm leading-relaxed">
+      {chunks.map((part, i) => (
+        <span
+          key={i}
+          className={
+            part.added ? 'text-green-400 bg-green-500/10 rounded px-1' :
+            part.removed ? 'text-red-400 bg-red-500/10 rounded px-1 line-through' :
+            'text-gray-200'
+          }
+        >
+          {part.value}
+        </span>
+      ))}
+    </div>
+  );
+}
+`,
+    },
+
+    llmsPrompt: `# Inline Editing Implementation Guide
+
+CORE FEATURES:
+- Detect selected text and show a floating toolbar near the range
+- Actions: rewrite, improve tone, shorten, expand, translate, fix grammar
+- Render inline diff with color-coded additions/removals; allow accept/reject
+- Provide mock processor; swap to real LLM endpoint via single hook
+
+DATA MODEL:
+- Selection: { text, start, end, range }
+- EditOperation: { type, text, context?, targetLanguage? }
+- DiffResult: { original, modified, changes[] }
+
+INTERACTION:
+- User selects text → toolbar appears → choose action → show loader
+- When response arrives, display diff; Cmd/Ctrl + Enter to accept, Esc to dismiss
+- Apply accepted diff back into the document while preserving caret
+
+UI:
+- Future Lab styling: glow halos, glass cards, gradient focus ring
+- Toolbar buttons with icons + labels; small bounce on hover
+- Keep min line-height for readability; use JetBrains Mono in diff
+
+ERROR HANDLING:
+- If API fails, show toast + keep original text intact
+- Clear selection state on unmount or blur to avoid stuck toolbar
+- Clamp selection length (e.g., 1200 chars) to keep diffs legible
+
+BEST PRACTICES:
+- Debounce selection listeners (~120ms) to avoid excessive recalculation
+- Maintain scroll position when applying diff to long documents
+- Provide ARIA labels for toolbar buttons and diff status text`,
   },
 ];
 

@@ -1,0 +1,5 @@
+{
+  "name": "Future Lab - Inline Editing Demo",
+  "description": "An interactive demo of the AI Inline Editing pattern featuring a glassmorphic UI, text selection, floating AI toolbar, and diff visualization.",
+  "requestFramePermissions": []
+}

@@ -1,0 +1,5 @@
+{
+  "name": "Future Lab Command Palette",
+  "description": "A futuristic, keyboard-centric command palette implementation featuring glassmorphism design, fuzzy search, and keyboard navigation.",
+  "requestFramePermissions": []
+}

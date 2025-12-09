@@ -15,7 +15,7 @@
 
 ### 待办事项 (Todo - High Priority)
 
-- [ ] 实现其他 Phase 2 交互模式（Inline Completion, Artifacts）
+- [x] Phase 2 模式接入（Inline Completion、Artifacts 已提供本地 Demo + 外部 API 链接）
 - [ ] 添加更多 Mock 响应数据
 - [ ] 优化响应式设计（移动端适配）
 
@@ -87,10 +87,10 @@
   - [ ] 实时预览
 
 - [ ] **LLM Artifacts 模式**
-  - [ ] Artifacts 容器组件
-  - [ ] 支持代码类型 artifact
-  - [ ] 支持图表类型 artifact
-  - [ ] 实时预览功能
+  - [x] Artifacts 容器组件
+  - [x] 支持代码类型 artifact
+  - [x] 支持图表类型 artifact
+  - [x] 实时预览功能
 
 - [x] **模式详情页**
   - [x] Tab 式详情页布局（Live Demo、Overview、Implementation）
@@ -121,14 +121,14 @@
   - [ ] 节点连接
 
 - [ ] **Command Palette 模式**
-  - [ ] 快捷键系统
-  - [ ] 命令搜索
-  - [ ] 命令执行
+  - [x] 快捷键系统
+  - [x] 命令搜索
+  - [x] 命令执行
 
 - [ ] **Inline Editing 模式**
-  - [ ] 文本选择检测
-  - [ ] 编辑菜单
-  - [ ] Diff 视图
+  - [x] 文本选择检测
+  - [x] 编辑菜单
+  - [x] Diff 视图
 
 - [ ] **iframe 沙箱优化**
   - [ ] 安全策略配置
@@ -202,7 +202,8 @@
   - Advantages、Limitations
   - Best Practices
 - ✅ 为 Chatbot 添加完整的代码示例和 llms.txt
-- ✅ 为 Inline Completion 和 Artifacts 添加外部演示链接
+- ✅ 为 Inline Completion 和 Artifacts 添加外部演示链接 + 本地 Demo 集成
+- ✅ Command Palette 与 Inline Editing 模式提供嵌入式 Demo 与 API 外链
 
 **技术实现**：
 - 扩展 `PatternConfig` 类型支持详细信息

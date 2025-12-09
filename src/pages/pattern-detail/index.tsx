@@ -4,6 +4,9 @@ import { getPatternById } from '@/lib/constants/patterns';
 import { ChatBot } from '@/components/patterns/chatbot';
 import { InlineCompletionDemo } from '@/components/patterns/inline-completion/InlineCompletionDemo';
 import { InfiniteCanvasDemo } from '@/components/patterns/canvas/InfiniteCanvasDemo';
+import { ArtifactsDemo } from '@/components/patterns/artifacts/ArtifactsDemo';
+import { CommandPaletteDemo } from '@/components/patterns/command-palette/CommandPaletteDemo';
+import { InlineEditingDemo } from '@/components/patterns/inline-editing/InlineEditingDemo';
 import { CopyButton } from '@/components/ui/copy-button';
 import { useState } from 'react';
 
@@ -187,6 +190,21 @@ export default function PatternDetailPage() {
                   {pattern.id === 'infinite-canvas' && (
                     <div className="backdrop-blur-md bg-black/20 rounded-lg border border-white/10">
                       <InfiniteCanvasDemo />
+                    </div>
+                  )}
+                  {pattern.id === 'artifacts' && (
+                    <div className="backdrop-blur-md bg-black/20 rounded-lg border border-white/10">
+                      <ArtifactsDemo />
+                    </div>
+                  )}
+                  {pattern.id === 'command-palette' && (
+                    <div className="backdrop-blur-md bg-black/20 rounded-lg border border-white/10">
+                      <CommandPaletteDemo />
+                    </div>
+                  )}
+                  {pattern.id === 'inline-editing' && (
+                    <div className="backdrop-blur-md bg-black/20 rounded-lg border border-white/10">
+                      <InlineEditingDemo />
                     </div>
                   )}
                 </>
