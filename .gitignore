@@ -24,3 +24,8 @@ dist-ssr
 *.sw?
 
 images/
+.claude
+pre/
+docs/
+CLAUDE.md
+AGENTS.md
